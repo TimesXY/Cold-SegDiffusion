@@ -934,7 +934,7 @@ class MedSegDiff(nn.Module):
         # 计算损失 MSE
         return F.mse_loss(model_out, target)
 
-    def forward(self, img, cond_img):
+    def forward(self, img, cond_img, epoch, epochs):
         """ 前向计算过程, 直接获取损失 """
 
         # 数据格式转换
@@ -960,7 +960,8 @@ class MedSegDiff(nn.Module):
         assert img.shape[1] == mask_channels, f'the segmented image must have {mask_channels} channels'
 
         # 生成时间编码
-        times = torch.randint(0, self.num_time_steps, (b,), device=device).long()
+        sc = int(np.sqrt(epoch / epochs) * self.num_time_steps)
+        times = torch.randint(sc, self.num_time_steps, (b,), device=device).long()
 
         # 对图像进行归一化
         img = normalize_to_neg_one_to_one(img)
