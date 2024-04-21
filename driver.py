@@ -114,7 +114,7 @@ if __name__ == '__main__':
         for (train_img, train_mask) in tqdm(train_loader):
             with accelerator.accumulate(model):
                 # Calculating and recording losses
-                train_loss = diffusion(train_mask, train_img)
+                train_loss = diffusion(train_mask, train_img, epoch, epochs)
 
                 # backpropagation gradient
                 accelerator.backward(train_loss)
@@ -138,7 +138,7 @@ if __name__ == '__main__':
             with torch.no_grad():
                 with accelerator.accumulate(model):
                     # 计算损失并记录
-                    valid_loss = diffusion(valid_mask, valid_img)
+                    valid_loss = diffusion(valid_mask, valid_img, epoch, epochs)
 
         # Record training loss results
         running_valid_loss += valid_loss.item() * valid_img.size(0)
